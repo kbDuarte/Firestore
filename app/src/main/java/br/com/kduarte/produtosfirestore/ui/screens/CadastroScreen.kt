@@ -45,7 +45,7 @@ fun CadastroScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text("Novo produto", style = MaterialTheme.typography.headlineMedium)
-            Text("Preencha os dados para salvar no Firestore.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("Preencha os dados para salvar no aparelho.", color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(28.dp))
             OutlinedTextField(
                 value = nome, onValueChange = { nome = it; onLimparErro() },
