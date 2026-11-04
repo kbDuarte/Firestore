@@ -1,44 +1,50 @@
-# Cadastro e Listagem de Produtos
+# Cadastro e Listagem de Produtos — Cloud Firestore
 
-Aplicativo Android desenvolvido em Kotlin para cadastrar produtos e consultar a lista salva localmente no aparelho.
+Aplicativo Android desenvolvido em Kotlin para cadastrar produtos e consultar em tempo real os documentos da coleção `Produtos` no Cloud Firestore.
 
 ## Funcionalidades
 
-- Cadastro de produtos com **Nome**, **Categoria** e **Preço**.
-- Identificador numérico gerado automaticamente pelo Room.
-- Listagem de todos os produtos cadastrados.
-- Atualização automática da lista quando um produto é inserido.
-- Navegação entre as telas de cadastro e listagem.
-- Validação dos campos e feedback de carregamento/erro.
-- Valores exibidos em Real (R$).
+- Cadastro de produtos com os campos `Nome`, `Categoria` e `Preço`.
+- Criação automática do ID de cada documento pelo Firestore.
+- Listagem dos produtos da coleção `Produtos`.
+- Atualização em tempo real usando Snapshot Listener.
+- Navegação entre cadastro e listagem.
+- Validação de campos, estado de carregamento e mensagens de erro.
+- Arquitetura MVVM + Repository + Kotlin Flow.
 
-## Banco de dados
+## Estrutura no Firestore
 
-O aplicativo utiliza **Room**, biblioteca de persistência local baseada em SQLite. Os dados ficam armazenados no arquivo `produtos.db` dentro do armazenamento privado do aplicativo.
+Coleção: `Produtos`
 
-Não é necessário criar projeto no Firebase, baixar `google-services.json`, configurar credenciais ou ter conexão com a internet para cadastrar e consultar produtos.
-
-A tabela `produtos` possui os campos:
+Cada documento contém:
 
 | Campo | Tipo |
 |---|---|
-| `id` | Inteiro, chave primária com geração automática |
-| `nome` | Texto |
-| `categoria` | Texto |
-| `preco` | Número decimal |
+| `Nome` | String |
+| `Categoria` | String |
+| `Preço` | Number (Double) |
+
+O ID do documento é gerado automaticamente pelo Firestore.
+
+## Configuração obrigatória do Firebase
+
+1. Abra o projeto Firebase já existente no Firebase Console.
+2. Em **Configurações do projeto > Seus apps**, adicione um aplicativo Android com o package name exato:
+   `br.com.kduarte.produtosfirestore`.
+3. Baixe o arquivo `google-services.json` desse novo registro Android.
+4. Coloque o arquivo em `app/google-services.json` (dentro da pasta `app`, ao lado do `build.gradle.kts`).
+5. No Firebase Console, abra **Firestore Database** e crie o banco de dados.
+6. Configure as regras de acesso adequadas ao seu projeto. Para uso real, não deixe regras abertas publicamente.
+
+**Importante:** o arquivo de configuração é específico para o package name do aplicativo. O `google-services.json` do app anterior `com.kduarte.authfirebase` não serve diretamente para este app, pois o package name é diferente. Não compartilhe nem publique esse arquivo em repositório público.
+
+## Executar
+
+Depois de adicionar o `google-services.json` e configurar o Firestore, abra o projeto no Android Studio, sincronize o Gradle e execute em um dispositivo/emulador com internet.
 
 ## Arquitetura
 
-- **MVVM:** separação entre interface e lógica de apresentação.
-- **Repository:** centraliza o acesso aos dados.
-- **Room + DAO:** persistência e consultas ao banco local.
-- **Kotlin Flow / StateFlow:** atualização reativa da interface.
-- **Jetpack Compose + Material 3:** construção das telas.
-
-## Como executar
-
-1. Abra o repositório no Android Studio.
-2. Aguarde a sincronização do Gradle.
-3. Execute o app em um emulador ou dispositivo Android (API 24 ou superior).
-
-Os produtos permanecem salvos ao fechar e abrir o aplicativo novamente. Desinstalar o aplicativo ou limpar os dados dele remove o banco local.
+- **UI:** Jetpack Compose + Material 3.
+- **ViewModel:** estado da tela com StateFlow.
+- **Repository:** operações de leitura e escrita no Firestore.
+- **Flow:** recebe atualizações em tempo real do Snapshot Listener.
