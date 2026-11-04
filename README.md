@@ -1,46 +1,44 @@
-# Produtos Firestore
+# Cadastro e Listagem de Produtos
 
-Aplicativo Android em Kotlin + Jetpack Compose para cadastrar e listar produtos usando Cloud Firestore.
+Aplicativo Android desenvolvido em Kotlin para cadastrar produtos e consultar a lista salva localmente no aparelho.
 
 ## Funcionalidades
 
 - Cadastro de produtos com **Nome**, **Categoria** e **Preço**.
-- Geração automática do ID do documento pelo Firestore.
-- Leitura em tempo real da coleção `Produtos`.
-- Navegação animada entre cadastro e listagem.
-- Arquitetura MVVM, Repository e estado reativo com Kotlin Flow.
+- Identificador numérico gerado automaticamente pelo Room.
+- Listagem de todos os produtos cadastrados.
+- Atualização automática da lista quando um produto é inserido.
+- Navegação entre as telas de cadastro e listagem.
 - Validação dos campos e feedback de carregamento/erro.
-- Interface Material 3 adaptável a tema claro/escuro (a paleta inicial está configurada em tema claro).
+- Valores exibidos em Real (R$).
 
-## Configuração do Firebase
+## Banco de dados
 
-1. Crie ou abra um projeto no [Firebase Console](https://console.firebase.google.com/).
-2. Adicione um aplicativo Android com o package name:
-   `br.com.kduarte.produtosfirestore`
-3. Baixe o arquivo `google-services.json` e coloque-o em `app/google-services.json`.
-4. No Firebase Console, acesse **Firestore Database** e crie o banco de dados.
-5. Configure as regras de acesso adequadas ao seu cenário. Para testes locais, use regras temporárias e restritas; não publique regras abertas em produção.
-6. Abra o projeto no Android Studio e sincronize o Gradle.
+O aplicativo utiliza **Room**, biblioteca de persistência local baseada em SQLite. Os dados ficam armazenados no arquivo `produtos.db` dentro do armazenamento privado do aplicativo.
 
-## Estrutura do Firestore
+Não é necessário criar projeto no Firebase, baixar `google-services.json`, configurar credenciais ou ter conexão com a internet para cadastrar e consultar produtos.
 
-Coleção: `Produtos`
-
-Cada documento recebe ID automático e contém os campos:
+A tabela `produtos` possui os campos:
 
 | Campo | Tipo |
 |---|---|
-| `Nome` | String |
-| `Categoria` | String |
-| `Preço` | Number (Double) |
+| `id` | Inteiro, chave primária com geração automática |
+| `nome` | Texto |
+| `categoria` | Texto |
+| `preco` | Número decimal |
 
-## Tecnologias
+## Arquitetura
 
-- Kotlin
-- Jetpack Compose + Material 3
-- Firebase Cloud Firestore
-- Navigation Compose
-- MVVM + Repository
-- Kotlin Coroutines / Flow
+- **MVVM:** separação entre interface e lógica de apresentação.
+- **Repository:** centraliza o acesso aos dados.
+- **Room + DAO:** persistência e consultas ao banco local.
+- **Kotlin Flow / StateFlow:** atualização reativa da interface.
+- **Jetpack Compose + Material 3:** construção das telas.
 
-> O arquivo `google-services.json` é específico do projeto Firebase e não é incluído no repositório. Adicione o arquivo obtido no console para executar o app conectado ao seu banco.
+## Como executar
+
+1. Abra o repositório no Android Studio.
+2. Aguarde a sincronização do Gradle.
+3. Execute o app em um emulador ou dispositivo Android (API 24 ou superior).
+
+Os produtos permanecem salvos ao fechar e abrir o aplicativo novamente. Desinstalar o aplicativo ou limpar os dados dele remove o banco local.
