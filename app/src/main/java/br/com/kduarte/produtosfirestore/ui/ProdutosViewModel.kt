@@ -1,8 +1,10 @@
 package br.com.kduarte.produtosfirestore.ui
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.kduarte.produtosfirestore.data.Produto
+import br.com.kduarte.produtosfirestore.data.ProdutoDatabase
 import br.com.kduarte.produtosfirestore.data.ProdutoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,25 +18,22 @@ data class ProdutosUiState(
     val mensagem: String? = null
 )
 
-class ProdutosViewModel(
-    private val repository: ProdutoRepository = ProdutoRepository()
-) : ViewModel() {
+class ProdutosViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = ProdutoRepository(
+        ProdutoDatabase.getInstance(application).produtoDao()
+    )
+
     private val _uiState = MutableStateFlow(ProdutosUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            repository.observarProdutos().collect { resultado ->
-                resultado.onSuccess { lista ->
-                    _uiState.value = _uiState.value.copy(
-                        produtos = lista, carregando = false, erro = null
-                    )
-                }.onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(
-                        carregando = false,
-                        erro = exception.localizedMessage ?: "Não foi possível carregar os produtos."
-                    )
-                }
+            repository.observarProdutos().collect { lista ->
+                _uiState.value = _uiState.value.copy(
+                    produtos = lista,
+                    carregando = false,
+                    erro = null
+                )
             }
         }
     }
@@ -54,9 +53,14 @@ class ProdutosViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(salvando = true, erro = null, mensagem = null)
             runCatching {
-                repository.cadastrar(Produto(nome = nomeLimpo, categoria = categoriaLimpa, preco = preco))
+                repository.cadastrar(
+                    Produto(nome = nomeLimpo, categoria = categoriaLimpa, preco = preco)
+                )
             }.onSuccess {
-                _uiState.value = _uiState.value.copy(salvando = false, mensagem = "Produto cadastrado com sucesso.")
+                _uiState.value = _uiState.value.copy(
+                    salvando = false,
+                    mensagem = "Produto cadastrado com sucesso."
+                )
                 aoConcluir()
             }.onFailure { exception ->
                 _uiState.value = _uiState.value.copy(
