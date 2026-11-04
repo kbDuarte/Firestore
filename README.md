@@ -14,6 +14,8 @@ Aplicativo Android desenvolvido em Kotlin para cadastrar produtos e consultar em
 
 ## Estrutura no Firestore
 
+Projeto Firebase: `authfirebasekot`
+
 Coleção: `Produtos`
 
 Cada documento contém:
@@ -26,21 +28,24 @@ Cada documento contém:
 
 O ID do documento é gerado automaticamente pelo Firestore.
 
-## Configuração obrigatória do Firebase
+## Configuração do Firebase
 
-1. Abra o projeto Firebase já existente no Firebase Console.
-2. Em **Configurações do projeto > Seus apps**, adicione um aplicativo Android com o package name exato:
-   `br.com.kduarte.produtosfirestore`.
-3. Baixe o arquivo `google-services.json` desse novo registro Android.
-4. Coloque o arquivo em `app/google-services.json` (dentro da pasta `app`, ao lado do `build.gradle.kts`).
-5. No Firebase Console, abra **Firestore Database** e crie o banco de dados.
-6. Configure as regras de acesso adequadas ao seu projeto. Para uso real, não deixe regras abertas publicamente.
+O aplicativo Android já está registrado no projeto Firebase `authfirebasekot` com o package name:
 
-**Importante:** o arquivo de configuração é específico para o package name do aplicativo. O `google-services.json` do app anterior `com.kduarte.authfirebase` não serve diretamente para este app, pois o package name é diferente. Não compartilhe nem publique esse arquivo em repositório público.
+`br.com.kduarte.produtosfirestore`
+
+Para executar localmente:
+
+1. Baixe o `google-services.json` correspondente a esse registro Android no Firebase Console.
+2. Coloque-o em `app/google-services.json`, ao lado do `app/build.gradle.kts`.
+3. No Firebase Console, abra **Firestore Database** e crie o banco de dados, caso ainda não exista.
+4. Configure regras de acesso compatíveis com o modo de uso do aplicativo. Não deixe regras públicas abertas em produção.
+
+**Segurança:** o arquivo `google-services.json` é ignorado pelo Git por meio do `.gitignore` e não deve ser enviado ao repositório público. O arquivo contém identificadores e configuração do projeto Firebase.
 
 ## Executar
 
-Depois de adicionar o `google-services.json` e configurar o Firestore, abra o projeto no Android Studio, sincronize o Gradle e execute em um dispositivo/emulador com internet.
+Depois de colocar o arquivo de configuração e criar/configurar o Firestore, abra o projeto no Android Studio, sincronize o Gradle e execute em um dispositivo/emulador com internet.
 
 ## Arquitetura
 
